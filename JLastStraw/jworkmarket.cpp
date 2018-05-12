@@ -45,6 +45,6 @@ void JWorkMarket::change(double _priceBuy, double _priceSell, double _availableB
 {
 	priceBuy_ = _priceBuy;
 	priceSell_ = _priceSell;
-	quantity_ = (_availableBalance/(_priceBuy))*0.98;
+    quantity_ = (_availableBalance/(_priceBuy))*0.9999;
 	marketName_ = _marketName;
 }

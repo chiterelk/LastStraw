@@ -663,7 +663,7 @@ void JLastStraw::checkTickers_()
 
 	if((!marketUSDT.isActive())&&(tickersUSDTVolume.count()!=0))
 	{
-        double x = (100*tickersUSDTVolume.at(0)->getBid()-100*tickersUSDTVolume.at(0)->getAsk()+tickersUSDTVolume.at(0)->getAsk()*(tickersUSDTVolume.at(0)->getSpread()*0.7*100))/((tickersUSDTVolume.at(0)->getSpread()*0.7*100)-200);
+        double x = (100*tickersUSDTVolume.at(0)->getBid()-100*tickersUSDTVolume.at(0)->getAsk()+tickersUSDTVolume.at(0)->getAsk()*(tickersUSDTVolume.at(0)->getSpread()*0.8*100))/((tickersUSDTVolume.at(0)->getSpread()*0.8*100)-200);
 		double availableUSDT = 0;
 
 		for(int i = 0;i<wallet_.count();i++)
