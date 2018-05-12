@@ -45,7 +45,7 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="lineEditApiKey">
         <property name="text">
-         <string>7b472dcf5e6a4546935b7d0a9ddf24ac</string>
+         <string/>
         </property>
        </widget>
       </item>
