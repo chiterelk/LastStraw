@@ -478,10 +478,32 @@ void JLastStraw::checkTickers_()
 {
 	//убераю тикеры в которых маленький спред.
 	QList <int> n;
-	for(int i = 0;i<tickers_.count();i++)
-		//if((tickers_.at(i)->getSpread()>minSpread)&&(tickers_.at(i)->getSpread()<maxSpread))
-		if((tickers_.at(i)->getSpread()<minSpread)||(tickers_.at(i)->getSpread()>maxSpread))
-			n<<i;
+    for(int i = 0;i<tickers_.count();i++)
+    {
+         for(int k = 0; k<markets_.count();k++)
+             if(tickers_.at(i)->getMarketName() == markets_.at(k)->getMarketName())
+             {
+                 if(markets_.at(k)->getBaseCurrency()== "BTC")
+                 {
+                    if((tickers_.at(i)->getSpread()<minSpreadBTC)||(tickers_.at(i)->getSpread()>maxSpreadBTC))
+                        n<<i;
+                 }
+                 if(markets_.at(k)->getBaseCurrency()== "ETH")
+                 {
+                     if((tickers_.at(i)->getSpread()<minSpreadETH)||(tickers_.at(i)->getSpread()>maxSpreadETH))
+                         n<<i;
+                 }
+                 if(markets_.at(k)->getBaseCurrency()== "USDT")
+                 {
+                     if((tickers_.at(i)->getSpread()<minSpreadUSDT)||(tickers_.at(i)->getSpread()>maxSpreadUSDT))
+                         n<<i;
+                 }
+                 break;
+             }
+
+//            if((tickers_.at(i)->getSpread()<minSpread)||(tickers_.at(i)->getSpread()>maxSpread))
+//                n<<i;
+    }
 	for(int i = n.count()-1;i>=0;i--)
 		tickers_.removeAt(n.at(i));
 	//разделяю пары по главных авлютах
@@ -572,6 +594,7 @@ void JLastStraw::checkTickers_()
 			if(wallet_.at(i)->getCurrency()=="BTC")
 				availableBTC = wallet_.at(i)->getAvailable();
 
+        qDebug()<<"Spread1: "<<(tickersBTCVolume.at(0)->getAsk()-tickersBTCVolume.at(0)->getBid())*100/tickersBTCVolume.at(0)->getAsk();
 		double priceBuy;
 		double priceSell;
 		priceBuy = QString::number(tickersBTCVolume.at(0)->getBid()+x*0.1,'f',8).toDouble();
@@ -583,11 +606,12 @@ void JLastStraw::checkTickers_()
 		qDebug()<<"BTC:";
 		qDebug()<<"Bid: "<<priceBuy;
 		qDebug()<<"Ask: "<<priceSell;
+        qDebug()<<"Spread: "<<(priceSell-priceBuy)*100/priceSell;
 		//
 
 
 		marketBTC.change(priceBuy,priceSell,availableBTC,tickersBTCVolume.at(0)->getMarketName());
-		marketBTC.setProcess(1);
+        //marketBTC.setProcess(1);
 		emit processBTC(1);
 
 		selectMarketForBTC(tickersBTCVolume.at(0)->getMarketName());
@@ -622,7 +646,7 @@ void JLastStraw::checkTickers_()
 		//
 
 		marketETH.change(priceBuy,priceSell,availableETH,tickersETHVolume.at(0)->getMarketName());
-		marketETH.setProcess(1);
+        //marketETH.setProcess(1);
 		emit processETH(1);
 
 		selectMarketForETH(tickersETHVolume.at(0)->getMarketName());
@@ -638,6 +662,7 @@ void JLastStraw::checkTickers_()
 			if(wallet_.at(i)->getCurrency()=="USDT")
 				availableUSDT = wallet_.at(i)->getAvailable();
 
+        qDebug()<<"Spread1: "<<(tickersUSDTVolume.at(0)->getAsk()-tickersUSDTVolume.at(0)->getBid())*100/tickersUSDTVolume.at(0)->getAsk();
 		double priceBuy;
 		double priceSell;
 		priceBuy = QString::number(tickersUSDTVolume.at(0)->getBid()+x*0.1,'f',8).toDouble();
@@ -649,10 +674,11 @@ void JLastStraw::checkTickers_()
 		qDebug()<<"USDT:";
 		qDebug()<<"Bid: "<<priceBuy;
 		qDebug()<<"Ask: "<<priceSell;
+        qDebug()<<"Spread: "<<(priceSell-priceBuy)*100/priceSell;
 		//
 
 		marketUSDT.change(priceBuy,priceSell,availableUSDT,tickersUSDTVolume.at(0)->getMarketName());
-		marketUSDT.setProcess(1);
+        //marketUSDT.setProcess(1);
 		emit processUSDT(1);
 
 		selectMarketForUSDT(tickersUSDTVolume.at(0)->getMarketName());
