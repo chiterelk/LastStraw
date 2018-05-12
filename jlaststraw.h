@@ -34,8 +34,8 @@ private:
 	QTimer *mainTimer = new QTimer(this);
 	QList <QString> baseCurrencies;
 	int timeoutMainTimer_ = 5000;
-    double minSpread = 0.015; // временные изменения
-	double maxSpread = 0.04;
+
+    bool resolution = true; //false чтобы запретить выставлять ордера.
 
     double minSpreadBTC = 0.025;
     double maxSpreadBTC = 0.04;

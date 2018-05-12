@@ -287,13 +287,13 @@ void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)
 	for(int i = 0;i<wallet_.count();i++)
 	{
 		if(wallet_.at(i)->getCurrency()=="BTC")
-			countMinTradeSizeBtc = floor(wallet_.at(i)->getAvailable()/(0.0005*0.05));
+            countMinTradeSizeBtc = floor(wallet_.at(i)->getAvailable()/(0.0005*1.05));
 		if(wallet_.at(i)->getCurrency()=="ETH")
 		{
 			countMinTradeSizeEth = floor(wallet_.at(i)->getAvailable()/(0.0005*1.05/(btc_eth->getBid())));
 		}
-		if(wallet_.at(i)->getCurrency()=="USDT")
-			countMinTradeSizeUsdt = floor(wallet_.at(i)->getAvailable()/(0.0005*0.05*usdt_btc->getAsk()));
+        if(wallet_.at(i)->getCurrency()=="USDT")
+            countMinTradeSizeUsdt = floor(wallet_.at(i)->getAvailable()/(0.0005*1.05*usdt_btc->getAsk()));
 
 
 	}
@@ -611,7 +611,11 @@ void JLastStraw::checkTickers_()
 
 
 		marketBTC.change(priceBuy,priceSell,availableBTC,tickersBTCVolume.at(0)->getMarketName());
-        //marketBTC.setProcess(1);
+        if(resolution)
+        {
+            marketBTC.setProcess(1);
+        }
+
 		emit processBTC(1);
 
 		selectMarketForBTC(tickersBTCVolume.at(0)->getMarketName());
@@ -646,7 +650,11 @@ void JLastStraw::checkTickers_()
 		//
 
 		marketETH.change(priceBuy,priceSell,availableETH,tickersETHVolume.at(0)->getMarketName());
-        //marketETH.setProcess(1);
+        if(resolution)
+        {
+            marketETH.setProcess(1);
+        }
+
 		emit processETH(1);
 
 		selectMarketForETH(tickersETHVolume.at(0)->getMarketName());
@@ -655,7 +663,7 @@ void JLastStraw::checkTickers_()
 
 	if((!marketUSDT.isActive())&&(tickersUSDTVolume.count()!=0))
 	{
-		double x = (100*tickersUSDTVolume.at(0)->getBid()-100*tickersUSDTVolume.at(0)->getAsk()+tickersUSDTVolume.at(0)->getAsk()*(tickersUSDTVolume.at(0)->getSpread()*0.6*100))/((tickersUSDTVolume.at(0)->getSpread()*0.6*100)-200);
+        double x = (100*tickersUSDTVolume.at(0)->getBid()-100*tickersUSDTVolume.at(0)->getAsk()+tickersUSDTVolume.at(0)->getAsk()*(tickersUSDTVolume.at(0)->getSpread()*0.7*100))/((tickersUSDTVolume.at(0)->getSpread()*0.7*100)-200);
 		double availableUSDT = 0;
 
 		for(int i = 0;i<wallet_.count();i++)
@@ -678,7 +686,11 @@ void JLastStraw::checkTickers_()
 		//
 
 		marketUSDT.change(priceBuy,priceSell,availableUSDT,tickersUSDTVolume.at(0)->getMarketName());
-        //marketUSDT.setProcess(1);
+        if(resolution)
+        {
+            marketUSDT.setProcess(1);
+        }
+
 		emit processUSDT(1);
 
 		selectMarketForUSDT(tickersUSDTVolume.at(0)->getMarketName());
