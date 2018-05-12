@@ -36,6 +36,16 @@ private:
 	int timeoutMainTimer_ = 5000;
     double minSpread = 0.015; // временные изменения
 	double maxSpread = 0.04;
+
+    double minSpreadBTC = 0.025;
+    double maxSpreadBTC = 0.04;
+    double minSpreadETH = 0.025;
+    double maxSpreadETH = 0.04;
+    double minSpreadUSDT = 0.015;
+    double maxSpreadUSDT = 0.04;
+
+
+
 	bool activeBaseCurrencyBTC_ = false;
 	bool activeBaseCurrencyETH_ = false;
 	bool activeBaseCurrencyUSDT_ = false;

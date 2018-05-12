@@ -302,7 +302,7 @@ void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)
 	{
 		emit marketNotFound();
 	}else{
-		if(1/*countMinTradeSizeBtc==0.0||countMinTradeSizeEth==0||countMinTradeSizeUsdt==0*/)
+        if(1)
 		{
 
 			if((countMinTradeSizeBtc==0)&&(activeBaseCurrencyBTC_==true))
@@ -565,7 +565,7 @@ void JLastStraw::checkTickers_()
 	}
 	if((!marketBTC.isActive())&&(tickersBTCVolume.count()!=0))
 	{
-		double x = (100*tickersBTCVolume.at(0)->getBid()-100*tickersBTCVolume.at(0)->getAsk()+tickersBTCVolume.at(0)->getAsk()*(tickersBTCVolume.at(0)->getSpread()*0.6*100))/((tickersBTCVolume.at(0)->getSpread()*0.6*100)-200);
+        double x = (100*tickersBTCVolume.at(0)->getBid()-100*tickersBTCVolume.at(0)->getAsk()+tickersBTCVolume.at(0)->getAsk()*(tickersBTCVolume.at(0)->getSpread()*0.98*100))/((tickersBTCVolume.at(0)->getSpread()*0.98*100)-200);
 		double availableBTC = 0;
 
 		for(int i = 0;i<wallet_.count();i++)
