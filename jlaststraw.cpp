@@ -269,7 +269,7 @@ void JLastStraw::mainProcess()
 
 void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)
 {
-	qDebug()<<"Это сообщение должно быть один раз!";
+
 	disconnect(Bittrex_,&JBittrex::gotTickers,this,&JLastStraw::firstGotTickers_);
 	//Нужно проверить достаточно ли денег на балансах главных валют.
 	JTickers* btc_eth;
@@ -304,7 +304,7 @@ void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)
 	}else{
 		if(1/*countMinTradeSizeBtc==0.0||countMinTradeSizeEth==0||countMinTradeSizeUsdt==0*/)
 		{
-			qDebug()<<"я здесь"<<"if(countMinTradeSizeBtc==0.0||countMinTradeSizeEth==0||countMinTradeSizeUsdt==0)";
+
 			if((countMinTradeSizeBtc==0)&&(activeBaseCurrencyBTC_==true))
 			{
 				activeBaseCurrencyBTC_ = false;
