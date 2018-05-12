@@ -34,7 +34,7 @@ private:
 	QTimer *mainTimer = new QTimer(this);
 	QList <QString> baseCurrencies;
 	int timeoutMainTimer_ = 5000;
-	double minSpread = 0.025;
+    double minSpread = 0.015; // временные изменения
 	double maxSpread = 0.04;
 	bool activeBaseCurrencyBTC_ = false;
 	bool activeBaseCurrencyETH_ = false;
