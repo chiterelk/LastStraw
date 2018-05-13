@@ -113,7 +113,6 @@ void JBittrex::gotTickers_(QNetworkReply *reply)
 		QJsonObject root = documment.object();
 		if(root.value("success").toBool())
 		{
-
 			if(root.value("result").isArray())
 			{
 				QList <JTickers*> tickers;
@@ -121,23 +120,8 @@ void JBittrex::gotTickers_(QNetworkReply *reply)
 				for(int i = 0; i<result.count();i++)
 				{
 					QJsonObject n = result.at(i).toObject();
-
-					//Отсеиваю валюты которые недавно залистили.
-					//Этот кусок кода не касается только бота.
-					QDateTime created;
-					QString createdStr = n.value("Created").toString();
-					if(createdStr.indexOf('.',0) == -1)
-					{
-						created = QDateTime::fromString(n.value("Created").toString(),"yyyy''-MM'-'dd'T'hh:mm:ss");
-					}else{
-						created = QDateTime::fromString(n.value("Created").toString(),"yyyy''-MM'-'dd'T'hh:mm:ss.z");
-					}
-					if(good>created)
-					{
-						tickers << new JTickers(n.value("MarketName").toString(),n.value("Ask").toDouble(),n.value("Bid").toDouble(),n.value("BaseVolume").toDouble());
-
-					}
-
+					tickers << new JTickers(n.value("MarketName").toString(),n.value("Ask").toDouble(),n.value("Bid").toDouble(),n.value("BaseVolume").toDouble());
+					tickers.back()->setCreated(n.value("Created").toString());
 				}
 				// // // // //
 				emit gotTickers(tickers);

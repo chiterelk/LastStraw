@@ -267,11 +267,9 @@ void JLastStraw::mainProcess()
 	}
 }
 
-void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)
+void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)//Проверяю достаточно ли денег на балансах главных валют(только при запуске!!!).
 {
-
 	disconnect(Bittrex_,&JBittrex::gotTickers,this,&JLastStraw::firstGotTickers_);
-	//Нужно проверить достаточно ли денег на балансах главных валют.
 	JTickers* btc_eth;
 	JTickers* usdt_btc;
 	for(int i = 0;i<_tickers.count();i++)
@@ -294,75 +292,51 @@ void JLastStraw::firstGotTickers_(QList<JTickers *> _tickers)
 		}
         if(wallet_.at(i)->getCurrency()=="USDT")
             countMinTradeSizeUsdt = floor(wallet_.at(i)->getAvailable()/(0.0005*1.05*usdt_btc->getAsk()));
-
-
 	}
-
 	if(countMinTradeSizeBtc==0.0&&countMinTradeSizeEth==0.0&&countMinTradeSizeUsdt==0.0)
 	{
 		emit marketNotFound();
 	}else{
-        if(1)
+		if((countMinTradeSizeBtc==0)&&(activeBaseCurrencyBTC_==true))
 		{
-
-			if((countMinTradeSizeBtc==0)&&(activeBaseCurrencyBTC_==true))
-			{
-				activeBaseCurrencyBTC_ = false;
-				emit chengeCountWorkMarket("BTC");
-			}
-			if((countMinTradeSizeEth==0)&&(activeBaseCurrencyETH_==true))
-			{
-				activeBaseCurrencyETH_ = false;
-
-				emit chengeCountWorkMarket("ETH");
-			}
-			if((countMinTradeSizeUsdt==0)&&(activeBaseCurrencyUSDT_==true))
-			{
-				activeBaseCurrencyUSDT_ = false;
-				emit chengeCountWorkMarket("USDT");
-			}
-			delete btc_eth;
-			delete usdt_btc;
-
-// // // // // // // // //
-			if((!activeBaseCurrencyBTC_)&&(!activeBaseCurrencyETH_)&&(!activeBaseCurrencyUSDT_))
-			{
-				emit marketNotFound();
-			}else{
-				baseCurrencies.clear();
-				if(activeBaseCurrencyBTC_)
-					 baseCurrencies<<"BTC";
-				if(activeBaseCurrencyETH_)
-					 baseCurrencies<<"ETH";
-				if(activeBaseCurrencyUSDT_)
-					 baseCurrencies<<"USDT";
-
-				QList <JMarket *> _markets;
-				for(int i = 0;i<markets_.count();i++)
-					for(int n = 0;n<baseCurrencies.count();n++)
-						if(markets_.at(i)->getBaseCurrency()==baseCurrencies.at(n))
-							_markets<<markets_.at(i);
-				markets_ = _markets;
-
-				//connect(mainTimer,&QTimer::timeout,Bittrex_,&JBittrex::getTickers);
-				//connect(Bittrex_,&JBittrex::gotTickers,this,gotTickers_);
-				connect(mainTimer,&QTimer::timeout,this,&JLastStraw::getTickersAndOpenedOrders);
-				//
-				//connect(Bittrex_,&JBittrex::gotTickers,this,gotTickers_);
-				//connect(Bittrex_,&JBittrex::gotOpenOrders,this,gotOpenOrders);
-				//
-				mainTimer->start(timeoutMainTimer_);
-				emit started(markets_.count());
-			}
-
-// // // //
+			activeBaseCurrencyBTC_ = false;
+			emit chengeCountWorkMarket("BTC");
 		}
+		if((countMinTradeSizeEth==0)&&(activeBaseCurrencyETH_==true))
+		{
+			activeBaseCurrencyETH_ = false;
+			emit chengeCountWorkMarket("ETH");
+		}
+		if((countMinTradeSizeUsdt==0)&&(activeBaseCurrencyUSDT_==true))
+		{
+			activeBaseCurrencyUSDT_ = false;
+			emit chengeCountWorkMarket("USDT");
+		}
+		delete btc_eth;
+		delete usdt_btc;
+		if((!activeBaseCurrencyBTC_)&&(!activeBaseCurrencyETH_)&&(!activeBaseCurrencyUSDT_))
+		{
+			emit marketNotFound();
+		}else{
+			baseCurrencies.clear();
+			if(activeBaseCurrencyBTC_)
+				baseCurrencies<<"BTC";
+			if(activeBaseCurrencyETH_)
+				baseCurrencies<<"ETH";
+			if(activeBaseCurrencyUSDT_)
+				baseCurrencies<<"USDT";
+			QList <JMarket *> _markets;
+			for(int i = 0;i<markets_.count();i++)
+				for(int n = 0;n<baseCurrencies.count();n++)
+					if(markets_.at(i)->getBaseCurrency()==baseCurrencies.at(n))
+						_markets<<markets_.at(i);
+			markets_ = _markets;
+			connect(mainTimer,&QTimer::timeout,this,&JLastStraw::getTickersAndOpenedOrders);
+			mainTimer->start(timeoutMainTimer_);
+			emit started(markets_.count());
+		}
+
 	}
-// // // //
-
-
-
-
 }
 
 void JLastStraw::gotOpenOrders(QList<JOpenedOrder *> _openOrders)
@@ -467,75 +441,53 @@ void JLastStraw::gotTickers_(QList<JTickers *> _tickers)
 {
 	disconnect(Bittrex_,&JBittrex::gotTickers,this,gotTickers_);
 	tickers_.clear();
-	for(int i = 0;i<_tickers.count();i++)
-		for(int n = 0;n<markets_.count();n++)
-			if(_tickers.at(i)->getMarketName() == markets_.at(n)->getMarketName())
-				tickers_<<_tickers.at(i);
+	tickers_ = _tickers;
 	checkTickers_();
 }
 
 void JLastStraw::checkTickers_()
 {
-	//убераю тикеры в которых маленький спред.
-	QList <int> n;
-    for(int i = 0;i<tickers_.count();i++)
-    {
-         for(int k = 0; k<markets_.count();k++)
-             if(tickers_.at(i)->getMarketName() == markets_.at(k)->getMarketName())
-             {
-                 if(markets_.at(k)->getBaseCurrency()== "BTC")
-                 {
-                    if((tickers_.at(i)->getSpread()<minSpreadBTC)||(tickers_.at(i)->getSpread()>maxSpreadBTC))
-                        n<<i;
-                 }
-                 if(markets_.at(k)->getBaseCurrency()== "ETH")
-                 {
-                     if((tickers_.at(i)->getSpread()<minSpreadETH)||(tickers_.at(i)->getSpread()>maxSpreadETH))
-                         n<<i;
-                 }
-                 if(markets_.at(k)->getBaseCurrency()== "USDT")
-                 {
-                     if((tickers_.at(i)->getSpread()<minSpreadUSDT)||(tickers_.at(i)->getSpread()>maxSpreadUSDT))
-                         n<<i;
-                 }
-                 break;
-             }
-
-//            if((tickers_.at(i)->getSpread()<minSpread)||(tickers_.at(i)->getSpread()>maxSpread))
-//                n<<i;
-    }
-	for(int i = n.count()-1;i>=0;i--)
-		tickers_.removeAt(n.at(i));
-	//разделяю пары по главных авлютах
+	//
+	//Разделяю пары по главных валютах. Если низкий спред, то не добавляю их в список.
+	// !! Нужно добавить внесение главной валюты в сам тикер
+	//
 	tickersBTC.clear();
 	tickersETH.clear();
 	tickersUSDT.clear();
 	for(int i = 0;i<tickers_.count();i++)
 	{
-		for(int n = 0;n<markets_.count();n++)
-		{
 			if(activeBaseCurrencyBTC_)
 			{
-				if(tickers_.at(i)->getMarketName() == markets_.at(n)->getMarketName())
-					if(markets_.at(n)->getBaseCurrency()=="BTC")
-						tickersBTC<<tickers_.at(i);
-
+				if(tickers_.at(i)->getBaseCurrency() == "BTC")
+				{
+						if(!((tickers_.at(i)->getSpread()<minSpreadBTC)||(tickers_.at(i)->getSpread()>maxSpreadBTC)))
+							if(tickers_.at(i)->hawOld() > 2592000)//Проверяю давно ли валюту залистили. Если позже чем я хочу, то добавляю в список. 2592000 - это 1 месяц
+								tickersBTC<<tickers_.at(i);
+				}
 			}
 			if(activeBaseCurrencyETH_)
 			{
-				if(tickers_.at(i)->getMarketName() == markets_.at(n)->getMarketName())
-					if(markets_.at(n)->getBaseCurrency()=="ETH")
-						tickersETH<<tickers_.at(i);
-
+				if(tickers_.at(i)->getBaseCurrency() ==  "ETH")
+				{
+						if(!((tickers_.at(i)->getSpread()<minSpreadETH)||(tickers_.at(i)->getSpread()>maxSpreadETH)))
+							if(tickers_.at(i)->hawOld() > 2592000)
+								tickersETH<<tickers_.at(i);
+				}
 			}
 			if(activeBaseCurrencyUSDT_)
 			{
-				if(tickers_.at(i)->getMarketName() == markets_.at(n)->getMarketName())
-					if(markets_.at(n)->getBaseCurrency()=="USDT")
-						tickersUSDT<<tickers_.at(i);
+				if(tickers_.at(i)->getBaseCurrency() == "USDT")
+				{
+						if(!((tickers_.at(i)->getSpread()<minSpreadUSDT)||(tickers_.at(i)->getSpread()>maxSpreadUSDT)))
+						{
+							if(tickers_.at(i)->hawOld() > 2592000)
+								tickersUSDT<<tickers_.at(i);
+						}
+				}
 			}
-		}
 	}
+
+
 	//сортирую по rank
 	QList <JTickers*> tickersBTCVolume;
 	QList <JTickers*> tickersETHVolume;

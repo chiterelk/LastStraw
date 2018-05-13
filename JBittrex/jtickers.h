@@ -13,12 +13,17 @@ private:
 	QString marketName_;
 	double spread_;
 	double rank_;
+	QString baseCurrency_;
+	QString created_;
+	uint createdUNIX_ = 0;
+
 	public:
 	explicit JTickers(QObject *parent = nullptr);
 	JTickers(QString _marketName, double _ask, double _bid, double _baseVolume);
 	void setAsk(double _ask){	ask_ = _ask;	};
 	void setBid(double _bid){	bid_ = _bid;	};
 	void setMarketName(QString _marketName){	marketName_ = _marketName;	};
+	void setCreated(QString _created);
 
 	double getAsk(void){	return ask_;	};
 	double getBid(void){	return bid_;	};
@@ -26,7 +31,10 @@ private:
 	double getRank(void){	return rank_;	};
 	QString getMarketName(void){	return marketName_;	};
 	double getBaseVolume(){ return baseVolume_; };
-
+	QString getBaseCurrency(){	return baseCurrency_;	};
+	QString getCreated(){	return created_;	};
+	uint getCreatedUNIX(){	return createdUNIX_;	};
+	uint hawOld();
 
 signals:
 

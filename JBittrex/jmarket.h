@@ -15,6 +15,7 @@ private:
 	QString marketName_;
 	bool isActive_ = false;
 	QString created_;
+	uint createdUNIX_ = 0;
 public:
 	JMarket();
 	void setMarketCurrency(QString _marketCurrency){	QString marketCurrency_ = _marketCurrency;	};
@@ -24,7 +25,7 @@ public:
 	void setMinTradeSize(double _minTradeSize){	minTradeSize_ = _minTradeSize; };
 	void setMarketName(QString _marketName){	marketName_ = _marketName;	};
 	void setIsActive(bool _isActive){	isActive_ = _isActive;	};
-	void setCreated(QString _created){	created_ = _created;	};
+	void setCreated(QString _created);
 
 
 	QString getMarketCurrency(){	return marketCurrency_;	};
@@ -35,6 +36,7 @@ public:
 	QString getMarketName(){	return marketName_;	};
 	bool getIsActive(){	return isActive_;	};
 	QString getCreated(){	return created_;	};
+	uint getCreatedUNIX(){	return createdUNIX_;	};
 
 };
 
